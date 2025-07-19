@@ -13,11 +13,7 @@ app = FastAPI(
     version="1.0.0"
 )
 
-@app.get("/")
-def root():
-    return {"message": "Bills of Exchange Generator is live."}
-
-class BillsOfExchangeData(BaseModel):
+class BillOfExchangeData(BaseModel):
     lc_number: Optional[str] = ""
     lc_date: Optional[str] = ""
     bill_date: Optional[str] = ""
@@ -54,8 +50,12 @@ class BillsOfExchangeData(BaseModel):
     lc_number2: Optional[str] = ""
     lc_date2: Optional[str] = ""
 
+@app.get("/")
+def root():
+    return {"message": "Bills of Exchange Generator is live."}
+
 @app.post("/generate-bills-of-exchange-pdf/")
-def generate_bills_pdf(data: BillsOfExchangeData):
+def generate_bills_pdf(data: BillOfExchangeData):
     try:
         buffer = BytesIO()
         c = canvas.Canvas(buffer, pagesize=A4)
@@ -68,12 +68,12 @@ def generate_bills_pdf(data: BillsOfExchangeData):
 
         def draw_field(label, value, x, y, bold=False):
             font = "Helvetica-Bold" if bold else "Helvetica"
-            c.setFont(font, 9)
+            c.setFont(font, 10)
             if label:
                 c.drawString(x, y, label)
                 y -= 12
-            c.setFont("Helvetica", 8)
-            c.drawString(x, y, value)
+            c.setFont("Helvetica", 9)
+            c.drawString(x, y, value or "")
 
         # === Page 1 ===
         draw_image("1.jpg")
